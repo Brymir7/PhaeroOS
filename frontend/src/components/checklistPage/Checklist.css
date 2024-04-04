@@ -1,0 +1,162 @@
+.checklist-dark {
+  --background: #121212;
+  --hovered: #1f1f1f;
+  --text: #e6e8ec;
+  --check: #22c55e;
+  --disabled: #60626a;
+  --border: #222222;
+}
+
+.checklist-light {
+  --background: #fff;
+  --hovered: #f0f0f0;
+  --text: #414856;
+  --check: #22c55e;
+  --disabled: #c3c8de;
+  --border: #bbbbbb;
+}
+
+#checklist {
+  --border-radius: 10px;
+  background: var(--background);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* align-items: start; */
+  label {
+    color: var(--text);
+    position: relative;
+    cursor: pointer;
+    display: grid;
+    align-items: center;
+    width: fit-content;
+    transition: color 0.3s ease;
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+    }
+    &::before {
+      height: 2px;
+      width: 8px;
+      left: -27px;
+      background: var(--check);
+      border-radius: 2px;
+      transition: background 0.3s ease;
+    }
+    &:after {
+      height: 4px;
+      width: 4px;
+      top: 8px;
+      left: -25px;
+      border-radius: 50%;
+    }
+  }
+}
+
+.checklist-item-div {
+  position: relative; /* Needed for absolute positioning of pseudo-elements */
+  border-radius: 10px; /* Adjust as needed */
+  overflow: hidden; /* Ensures the pseudo-element respects the border radius */
+}
+
+.checklist-item-div-border::before {
+  content: "";
+  position: absolute;
+  bottom: 0; /* Aligns with the top of the parent div */
+  left: 0; /* Aligns with the left of the parent div */
+  right: 0; /* Aligns with the right of the parent div */
+  border-bottom: 1px solid;
+  border-color: var(--border);
+}
+
+.checklist-item-div-border-top::before {
+  content: "";
+  position: absolute;
+  top: 0; /* Aligns with the top of the parent div */
+  left: 0; /* Aligns with the left of the parent div */
+  right: 0; /* Aligns with the right of the parent div */
+  border-top: 1px solid;
+  border-color: var(--border);
+}
+
+@keyframes move {
+  50% {
+    padding-left: 8px;
+    padding-right: 0px;
+  }
+  100% {
+    padding-right: 4px;
+  }
+}
+@keyframes slice {
+  60% {
+    width: 100%;
+    left: 4px;
+  }
+  100% {
+    width: 100%;
+    left: -2px;
+    padding-left: 0;
+  }
+}
+@keyframes check-01 {
+  0% {
+    width: 4px;
+    top: auto;
+    transform: rotate(0);
+  }
+  50% {
+    width: 0px;
+    top: auto;
+    transform: rotate(0);
+  }
+  51% {
+    width: 0px;
+    top: 8px;
+    transform: rotate(45deg);
+  }
+  100% {
+    width: 5px;
+    top: 8px;
+    transform: rotate(45deg);
+  }
+}
+@keyframes check-02 {
+  0% {
+    width: 4px;
+    top: auto;
+    transform: rotate(0);
+  }
+  50% {
+    width: 0px;
+    top: auto;
+    transform: rotate(0);
+  }
+  51% {
+    width: 0px;
+    top: 8px;
+    transform: rotate(-45deg);
+  }
+  100% {
+    width: 10px;
+    top: 8px;
+    transform: rotate(-45deg);
+  }
+}
+@keyframes firework {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 -2px #4f29f0, 0 0 0 -2px #4f29f0, 0 0 0 -2px #4f29f0,
+      0 0 0 -2px #4f29f0, 0 0 0 -2px #4f29f0, 0 0 0 -2px #4f29f0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 -15px 0 0px #4f29f0, 14px -8px 0 0px #4f29f0,
+      14px 8px 0 0px #4f29f0, 0 15px 0 0px #4f29f0, -14px 8px 0 0px #4f29f0,
+      -14px -8px 0 0px #4f29f0;
+  }
+}

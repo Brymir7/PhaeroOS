@@ -1,0 +1,395 @@
+.flame {
+  z-index: 2;
+  transform: scale(0.4);
+}
+.flm-black {
+  --color: #000; /* Black */
+}
+
+.flm-first {
+  color: var(--color);
+  top: 5.4rem;
+  opacity: 0.7;
+}
+.flm-second {
+  color: var(--color);
+  top: 3.6rem;
+  box-shadow: 0 0 1rem var(--color);
+  opacity: 0.8;
+}
+.flm-third {
+  color: var(--color);
+  top: 1.8rem;
+  box-shadow: 0 0 1rem var(--color);
+  opacity: 0.9;
+}
+.flm-forth {
+  color: var(--color);
+  box-shadow: 0 0 1rem var(--color);
+}
+
+.animate-first {
+  animation: burn-red 1.2s;
+}
+.animate-second {
+  animation: burn-orng 1.4s;
+}
+.animate-third {
+  animation: burn-ylw 1.8s;
+}
+.animate-forth {
+  animation: burn-wht 2s;
+}
+
+.static-first {
+  animation: static-red 1.2s;
+}
+.static-second {
+  animation: static-orng 1.4s;
+}
+.static-third {
+  animation: static-ylw 1.8s;
+}
+.static-forth {
+  animation: static-wht 2s;
+}
+
+/* classic flame */
+.flm-1-4 {
+  --color: white;
+}
+.flm-1-3 {
+  --color: gold;
+}
+.flm-1-2 {
+  --color: orange;
+}
+.flm-1-1 {
+  --color: crimson;
+}
+
+/* cool flame */
+.flm-2-4 {
+  --color: #dce3ff; /* Light Blue-White */
+}
+.flm-2-3 {
+  --color: #aed6f1; /* Soft Sky Blue */
+}
+.flm-2-2 {
+  --color: #5dade2; /* Cerulean Blue */
+}
+.flm-2-1 {
+  --color: #21618c; /* Deep Ocean Blue */
+}
+
+/* earth flame */
+.flm-3-4 {
+  --color: #fdfefe; /* Ivory */
+}
+.flm-3-3 {
+  --color: #fad7a0; /* Peach */
+}
+.flm-3-2 {
+  --color: #e59866; /* Burnt Orange */
+}
+.flm-3-1 {
+  --color: #ba4a00; /* Rust */
+}
+
+/* gray flame */
+.flm-4-4 {
+  --color: #f5f5f5; /* Very Light Gray */
+}
+.flm-4-3 {
+  --color: #cccccc; /* Light Gray */
+}
+.flm-4-2 {
+  --color: #a6a6a6; /* Medium Gray */
+}
+.flm-4-1 {
+  --color: #808080; /* Gray */
+}
+
+/* vibrant red flame */
+.flm-5-4 {
+  --color: #ffd1dc; /* Pink Flamingo */
+}
+.flm-5-3 {
+  --color: #ff616d; /* Sunset Orange */
+}
+.flm-5-2 {
+  --color: #ff3838; /* Red Salsa */
+}
+.flm-5-1 {
+  --color: #c70039; /* Red Pigment */
+}
+
+/* deepr red flame */
+.flm-6-4 {
+  --color: #f8c8dc; /* Pale, Soft Pink */
+}
+.flm-6-3 {
+  --color: #db7093; /* Pale Violet Red */
+}
+.flm-6-2 {
+  --color: #c71585; /* Medium Violet Red */
+}
+.flm-6-1 {
+  --color: #880808; /* Dark Red */
+}
+
+.flm-7-4 {
+  --color: #add8e6; /* Light Blue */
+}
+.flm-7-3 {
+  --color: #87ceeb; /* Sky Blue */
+}
+.flm-7-2 {
+  --color: #4682b4; /* Steel Blue */
+}
+.flm-7-1 {
+  --color: #0000cd; /* Medium Blue */
+}
+
+/* intense purple flame */
+.flm-8-4 {
+  --color: #dda0dd; /* Plum */
+}
+.flm-8-3 {
+  --color: #ba55d3; /* Medium Orchid */
+}
+.flm-8-2 {
+  --color: #9932cc; /* Dark Orchid */
+}
+.flm-8-1 {
+  --color: #4b0082; /* Indigo */
+}
+
+.flm-9-4 {
+  --color: #98fb98; /* Pale Green */
+}
+.flm-9-3 {
+  --color: #32cd32; /* Lime Green */
+}
+.flm-9-2 {
+  --color: #228b22; /* Forest Green */
+}
+.flm-9-1 {
+  --color: #006400; /* Dark Green */
+}
+
+/* exotic turquoise flame */
+.flm-10-4 {
+  --color: #afeeee; /* Pale Turquoise */
+}
+.flm-10-3 {
+  --color: #40e0d0; /* Turquoise */
+}
+.flm-10-2 {
+  --color: #48d1cc; /* Medium Turquoise */
+}
+.flm-10-1 {
+  --color: #008080; /* Teal */
+}
+
+/* celestial gold flame */
+.flm-11-4 {
+  --color: #fffacd; /* Lemon Chiffon */
+}
+.flm-11-3 {
+  --color: #ffd700; /* Gold */
+}
+.flm-11-2 {
+  --color: #daa520; /* Goldenrod */
+}
+.flm-11-1 {
+  --color: #b8860b; /* Dark Goldenrod */
+}
+
+/* dynamic orange flame */
+.flm-12-4 {
+  --color: #ffe4b5; /* Moccasin */
+}
+.flm-12-3 {
+  --color: #ff8c00; /* Dark Orange */
+}
+.flm-12-2 {
+  --color: #ff7f50; /* Coral */
+}
+.flm-12-1 {
+  --color: #ff4500; /* Orange Red */
+}
+.text-flm {
+  color: var(--color);
+}
+.flm-part {
+  background-color: currentColor;
+  border-radius: 50%;
+  position: relative;
+  transform: rotate(60deg) skewX(0deg) scale(1);
+  border-color: currentColor;
+  width: 2rem;
+  height: 2rem;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.flm-part.flipped {
+  transform: rotate(120deg) skewX(0deg) scale(1);
+}
+
+.flm-part::before {
+  content: "";
+  position: absolute;
+  border-radius: 0 0 0 100%;
+  border-bottom-style: solid;
+  border-bottom-color: inherit;
+  height: 0.5rem;
+  width: 2rem;
+  left: -1rem;
+  top: -0.5rem;
+  border-bottom-width: 2rem;
+}
+
+.flm-part.flipped::before {
+  border-radius: 100% 0 0 0;
+  border-bottom: 0 solid transparent;
+  border-top-style: solid;
+  border-top-color: inherit;
+  border-top-width: 2rem;
+  height: 0.5rem;
+  width: 2rem;
+  left: -1rem;
+  top: 0;
+}
+
+@keyframes burn-wht {
+  0% {
+    transform: rotate(60deg) skewX(0deg) scale(1);
+  }
+  20% {
+    transform: rotate(50deg) skewX(-3deg) scale(1.1);
+  }
+  40% {
+    transform: rotate(60deg) skewX(0deg) scale(1);
+  }
+  60% {
+    transform: rotate(70deg) skewX(3deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(60deg) skew(0deg) scale(1);
+  }
+}
+
+@keyframes burn-ylw {
+  0% {
+    transform: rotate(120deg) skewX(0deg) scale(1.4);
+  }
+  20% {
+    transform: rotate(110deg) skewX(10deg) scale(1.5);
+  }
+  40% {
+    transform: rotate(120deg) skewX(0deg) scale(1.4);
+  }
+  60% {
+    transform: rotate(130deg) skewX(-10deg) scale(1.5);
+  }
+  100% {
+    transform: rotate(120deg) skew(0deg) scale(1.4);
+  }
+}
+
+@keyframes burn-orng {
+  0% {
+    transform: rotate(65deg) skewX(0deg) scale(1.6);
+  }
+  20% {
+    transform: rotate(60deg) skewX(-15deg) scale(1.7);
+  }
+  40% {
+    transform: rotate(65deg) skewX(0deg) scale(1.6);
+  }
+  60% {
+    transform: rotate(70deg) skewX(2deg) scale(1.7);
+  }
+  100% {
+    transform: rotate(65deg) skew(0deg) scale(1.6);
+  }
+}
+
+@keyframes burn-red {
+  0% {
+    transform: rotate(120deg) skewX(0deg) scale(1.8);
+  }
+  20% {
+    transform: rotate(118deg) skewX(5deg) scale(2);
+  }
+  40% {
+    transform: rotate(120deg) skewX(0deg) scale(1.8);
+  }
+  60% {
+    transform: rotate(122deg) skewX(-5deg) scale(2);
+  }
+  100% {
+    transform: rotate(120deg) skew(0deg) scale(1.8);
+  }
+}
+@keyframes static-wht {
+  0% {
+    transform: rotate(60deg) skewX(0deg) scale(0.8);
+  }
+  100% {
+    transform: rotate(60deg) skew(0deg) scale(0.8);
+  }
+}
+
+@keyframes static-ylw {
+  0% {
+    transform: rotate(120deg) skewX(0deg) scale(1);
+  }
+  100% {
+    transform: rotate(120deg) skew(0deg) scale(1);
+  }
+}
+
+@keyframes static-orng {
+  0% {
+    transform: rotate(65deg) skewX(0deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(65deg) skew(0deg) scale(1.2);
+  }
+}
+
+@keyframes static-red {
+  0% {
+    transform: rotate(120deg) skewX(0deg) scale(1.4);
+  }
+  100% {
+    transform: rotate(120deg) skew(0deg) scale(1.4);
+  }
+}
+
+@keyframes burn-smoke {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(4);
+    opacity: 0;
+    top: 0;
+  }
+}
+
+@keyframes burn-smoke-rev {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-360deg) scale(5);
+    opacity: 0;
+    top: 0;
+  }
+}

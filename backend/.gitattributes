@@ -1,0 +1,13 @@
+db/cleaned/input_food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/nutrient.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/food_nutrient.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/food_portion.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/foundation_food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/german_food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/german_foundation_food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/branded_food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/fndss_ingredient_nutrient_value.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/survey_fndds_food.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/userfoods.csv filter=lfs diff=lfs merge=lfs -text
+db/cleaned/userrecommendations.csv filter=lfs diff=lfs merge=lfs -text

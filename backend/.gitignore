@@ -1,0 +1,8 @@
+# .gitignore
+__pycache__
+# Ignore .env file
+venv
+.vscode
+/db/postgres_data
+.ragatouille
+

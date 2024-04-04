@@ -1,0 +1,288 @@
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+:root {
+  --transition: 0.25s;
+  --spark: 1.8s;
+}
+
+.feedback-button-light {
+  --bg: radial-gradient(
+      40% 50% at center 100%,
+      hsl(170 calc(var(--active) * 97%) 72% / var(--active)),
+      transparent
+    ),
+    radial-gradient(
+      80% 100% at center 120%,
+      hsl(180 calc(var(--active) * 97%) 70% / var(--active)),
+      transparent
+    ),
+    hsl(190 calc(var(--active) * 97%) calc((var(--active) * -24%) + 92%));
+  box-shadow: 0 0 calc(var(--active) * 1.5em) calc(var(--active) * 0.1em)
+      hsla(185, 71%, 44%, 0.484),
+    0 0.03em 0 0
+      hsl(260 calc(var(--active) * 97%) calc((var(--active) * 50%) + 30%)) inset,
+    0 -0.04em 0 0 hsl(260 calc(var(--active) * 97%) calc(var(--active) * 60%)) inset;
+}
+
+.feedback-button {
+  --cut: 0.1em;
+  --active: 0;
+  background: var(--bg);
+  font-size: 2rem;
+  font-weight: 500;
+  border: 0;
+  cursor: pointer;
+  padding: 0.9em 1.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0em;
+  white-space: nowrap;
+  border-radius: 40rem;
+  position: relative;
+
+  transition: box-shadow var(--transition), scale var(--transition),
+    background var(--transition);
+  scale: calc(1 + (var(--active) * 0.03));
+}
+
+.feedback-button:active {
+  scale: 1;
+}
+
+svg {
+  overflow: visible !important;
+}
+
+.sparkle path {
+  color: hsl(0 0% calc((var(--active, 0) * 70%) + var(--base)));
+  transform-box: fill-box;
+  transform-origin: center;
+  fill: currentColor;
+  stroke: currentColor;
+  animation-delay: calc((var(--transition) * 1.5) + (var(--delay) * 1s));
+  animation-duration: 0.6s;
+  transition: color var(--transition);
+}
+
+.feedback-button:is(:hover, :focus-visible) path {
+  animation-name: bounce;
+}
+
+@keyframes bounce {
+  35%,
+  65% {
+    scale: var(--scale);
+  }
+}
+.sparkle path:nth-of-type(1) {
+  --scale: 0.5;
+  --delay: 0.1;
+  --base: 40%;
+}
+
+.sparkle path:nth-of-type(2) {
+  --scale: 1.5;
+  --delay: 0.2;
+  --base: 20%;
+}
+
+.sparkle path:nth-of-type(3) {
+  --scale: 2.5;
+  --delay: 0.35;
+  --base: 30%;
+}
+
+.feedback-button:before {
+  content: "";
+  position: absolute;
+  inset: -0.25em;
+  z-index: -1;
+  border-radius: 40rem;
+  opacity: var(--active, 0);
+  transition: opacity var(--transition);
+}
+
+.spark {
+  position: absolute;
+  inset: 0;
+  border-radius: 40rem;
+  rotate: 0deg;
+  overflow: hidden;
+  mask: linear-gradient(white, transparent 50%);
+  animation: flip calc(var(--spark) * 2) infinite steps(2, end);
+}
+
+@keyframes flip {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.spark:before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  aspect-ratio: 1;
+  top: 0%;
+  left: 50%;
+  z-index: -1;
+  translate: -50% -15%;
+  rotate: 0;
+  transform: rotate(-90deg);
+  opacity: calc((var(--active)) + 0.4);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 340deg,
+    rgb(6, 160, 198) 350deg,
+    rgb(12, 240, 35) 360deg
+  );
+  transition: opacity var(--transition);
+  animation: rotate var(--spark) linear infinite both;
+}
+
+.spark:after {
+  content: "";
+  position: absolute;
+  inset: var(--cut);
+  border-radius: 40rem;
+}
+
+.backdrop {
+  position: absolute;
+  inset: var(--cut);
+  background: var(--bg);
+  border-radius: 40rem;
+  border: 4px;
+  transition: background var(--transition);
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+@supports (selector(:has(:is(+ *)))) {
+  body:has(button:is(:hover, :focus-visible)) {
+    --active: 1;
+    --play-state: running;
+  }
+  .bodydrop {
+    display: none;
+  }
+}
+
+.feedback-button:is(:hover, :focus-visible) ~ :is(.bodydrop, .particle-pen) {
+  --active: 1;
+  --play-state: runnin;
+}
+
+.feedback-button:is(:hover, :focus-visible) {
+  --active: 1;
+  --play-state: running;
+}
+
+.sparkle-button {
+  position: relative;
+}
+
+.text-dark {
+  translate: 2% -6%;
+  letter-spacing: 0.01ch;
+  background: linear-gradient(
+    90deg,
+    hsl(0 0% calc((var(--active) * -10%) + 24%)),
+    hsl(0 0% calc((var(--active) * -10%) + 16%))
+  );
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: background var(--transition);
+}
+
+.text-light {
+  translate: 2% -6%;
+  letter-spacing: 0.01ch;
+  background: linear-gradient(
+    90deg,
+    hsl(0 0% calc((var(--active) * 100%) + 65%)),
+    hsl(0 0% calc((var(--active) * 100%) + 26%))
+  );
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: background var(--transition);
+}
+
+.feedback-button svg {
+  inline-size: 1.25em;
+  translate: -25% -5%;
+}
+
+/* loading animation */
+
+.loading-colors-dark {
+  --defaultblk: #333333;
+  --animateblk: #fff;
+}
+
+.loading-colors-light {
+  --defaultblk: #c2b9b9;
+  --animateblk: #555555;
+}
+
+.loading-body {
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  margin: 0;
+  gap: 10px;
+  /* flex-wrap: wrap; */
+}
+
+.loader-box {
+  position: relative;
+  border-radius: 100%;
+  background-color: var(--defaultblk);
+  height: 20px;
+  width: 20px;
+  transition: 0.5s ease-in-out;
+  flex-shrink: 0;
+}
+
+.loader-txt {
+  display: none;
+  color: var(--defaultblk);
+  font-family: "Red Hat Text";
+  font-weight: 700;
+  font-size: 25px;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+@keyframes loading_anim {
+  0% {
+    background-color: var(--defaultblk);
+  }
+  50% {
+    transform: translate(15px, 0px);
+    background-color: var(--animateblk);
+  }
+  100% {
+    background-color: var(--defaultblk);
+  }
+}

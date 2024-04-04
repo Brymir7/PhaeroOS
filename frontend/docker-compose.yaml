@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    volumes:
+      - ..:/phaero_frontend
+    working_dir: /phaero_frontend/frontend
+    ports:
+      - "4173:4173"
+      - "5173:5173"
