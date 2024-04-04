@@ -1,0 +1,75 @@
+.mic-checkbox {
+  display: none;
+}
+
+.mic-checkbox:checked + .mic-button {
+  transform: rotateY(180deg);
+}
+
+.mic-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: 50px;
+  border-radius: 100%;
+  transition: transform 0.4s;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.button-message,
+.mic {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.button-message {
+  position: absolute;
+  width: 50px;
+  color: var(--color);
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  line-height: 17px;
+  z-index: 2;
+  transform: rotateY(0deg);
+  pointer-events: none;
+}
+
+.mic-button-loader {
+  height: 50px;
+  width: 50px;
+  background-color: transparent;
+  transform: rotateY(180deg);
+  top: 0px;
+  left: 0px;
+}
+
+.mic-checkbox:checked + .mic-button > .mic > .mic-button-loader {
+  border-top: 2px solid #38bdf8;
+  border-radius: 100%;
+}
+
+.mic-checkbox:checked + .mic-button > .mic > .mic-button-loader-animation {
+  animation: borderLoader 1.3s 0.2s ease-in-out infinite;
+}
+.mic-checkbox:checked + .mic-button > .mic > .mic-button-loader-paused {
+  animation-play-state: paused;
+}
+
+.mic {
+  position: relative;
+  transform: rotateY(180deg);
+}
+
+@keyframes borderLoader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}

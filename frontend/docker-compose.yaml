@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    volumes:
+      - ..:/phaero_frontend
+    working_dir: /phaero_frontend
+    command: sleep infinity
+    # for hosting on phone
+    # ports:
+    #   - "5173:5173" # Map port 5173 from the container to port 5173 on the host

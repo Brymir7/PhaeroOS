@@ -1,0 +1,28 @@
+.embla__journal__prompts {
+  max-width: 48rem;
+  margin: auto;
+  --slide-height: 5rem;
+  --slide-spacing: 1rem;
+  --slide-size: 100%;
+}
+.embla__viewport__journal__prompts {
+  overflow: hidden;
+}
+.embla__container__journal__prompts {
+  backface-visibility: hidden;
+  display: flex;
+  touch-action: pan-y;
+  margin-left: calc(var(--slide-spacing) * -1);
+}
+.embla__slide__journal__prompts {
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  padding-left: var(--slide-spacing);
+}
+.embla__slide__number__journal__prompts {
+  font-size: 0.75rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
