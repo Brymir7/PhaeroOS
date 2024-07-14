@@ -1,5 +1,6 @@
 import asyncio
 from datetime import timedelta
+import json
 import time
 import httpx
 from api.v1.endpoints.openAIUtils import get_embedding_from_text
@@ -16,9 +17,11 @@ import re
 
 # import dspy
 
-OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
 settings = create_settings()
 OPENAI_API_KEY = settings.OPENAI_KEY
+OPENAI_API_URL = settings.OPENAI_API_URL
+USE_LOCAL_MODEL = settings.USE_LOCAL_MODEL
+LOCAL_MODEL_URL = settings.LOCAL_MODEL_URL
 
 
 def has_digit(s: str) -> bool:
@@ -33,19 +36,41 @@ async def async_AIPrompt(
     model: str = "gpt-3.5-turbo-0125",
     temperature: float = 0.0,
 ) -> str:
-    headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    data = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": sys_message},
-            {"role": "user", "content": injection + query},
-        ],
-        "temperature": temperature,
-    }
-    response = await client.post(OPENAI_API_URL, headers=headers, json=data, timeout=30)
+    if USE_LOCAL_MODEL:
+        url = LOCAL_MODEL_URL
+        data = {
+            "model": settings.LOCAL_MODEL_NAME,
+            "messages": [
+                {"role": "system", "content": sys_message},
+                {"role": "user", "content": injection + query},
+            ],
+            "temperature": temperature,
+        }
+        response = await client.post(url, json=data, timeout=30)
+        json_results = response.content.split(b"\n")
+        result = [json.loads(j) for j in json_results if j]
+        return "".join(
+            obj["message"]["content"]
+            for obj in result
+            if "message" in obj and "content" in obj["message"]
+        )
+    else:
+        headers = {
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        data = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": sys_message},
+                {"role": "user", "content": injection + query},
+            ],
+            "temperature": temperature,
+        }
+        response = await client.post(
+            OPENAI_API_URL, headers=headers, json=data, timeout=30
+        )
+
     result = response.json()
     if "choices" not in result or not result["choices"]:
         return ""
@@ -238,8 +263,6 @@ class PhaeroNoteDecoder:
             hydrationAmount,
             "ML",
         )
-        print("HYDRAAATION", hydrationAmount)
-        print(self.phaeroNoteDict["Food"]["FoodList"])
         return self.phaeroNoteDict
 
     def convert_phaero_note_to_new_foods(self):
@@ -256,7 +279,6 @@ class PhaeroNoteDecoder:
         filteredFoodGrams = [
             100 if (not grams or grams <= 5) else grams for grams in foodGrams
         ]  # if its smaller than 5g, assume its 100g also because of floating point like 0.5
-        print(filteredFoodLines, filteredFoodGrams)
         splitAtFirstNumber = lambda x: re.split(r"(\d+)", x, 1)
         listOfFoods: list[str] = []
         for line in filteredFoodLines:
@@ -341,12 +363,6 @@ class PhaeroNoteDecoder:
         visited = {}
         for idx, food in enumerate(listOfFoods):
             foodToAppend = food.strip().upper()
-            print(
-                foodToAppend,
-                smart_bool_lookup(
-                    foodToAppend, [key for key in self.userFoodsWithPortions.keys()]
-                ),
-            )
             if not smart_bool_lookup(
                 foodToAppend,
                 [key for key in self.phaeroNoteDict["Food"]["FoodList"].keys()],
@@ -404,14 +420,11 @@ class PhaeroNoteDecoder:
                 grams,
                 "g",
             ]
-        print(self.phaeroNoteDict["Food"]["Not found foods"])
         return self.phaeroNoteDict
 
     def convert_phaero_note_to_sleep_entry(self):
         # NOTE defualt values are always set so if we don'Ät set them here they are set already
         sleepTimes = sleepAI.SleepAI(self.phaeroNote).get_sleep_time_strings()
-
-        print(sleepTimes)
         if not sleepTimes:
             return self.phaeroNoteDict
         if len(sleepTimes) == 1:
@@ -477,7 +490,6 @@ class PhaeroNoteDecoder:
         if self.phaeroNoteDict["Exercise"]["Steps"] == 0:
             steps = exerciseClass.get_steps()
             self.phaeroNoteDict["Exercise"]["Steps"] = steps
-        print("processing cardio")
         cardioExercises = (
             exerciseClass.get_cardio_exercises_durations_sets_reps_calories_distances()
         )  # TODO add user exercises)
@@ -496,7 +508,6 @@ class PhaeroNoteDecoder:
                 self.phaeroNoteDict["Exercise"]["Exercises"]["Cardio Exercises"][
                     exercise_name
                 ][key] = (value if value else 0)
-        print("processing weights")
         weightLiftingExercises = (
             exerciseClass.get_weightlifting_exercise_sets_reps_weights()
         )  # TODO add user exercises
@@ -517,7 +528,6 @@ class PhaeroNoteDecoder:
                 self.phaeroNoteDict["Exercise"]["Exercises"][
                     "Weight Lifting Exercises"
                 ][exercise_name][key] = (value if value else 0)
-        print("processing bodyweight")
         bodyweightExercises = (
             exerciseClass.get_bodyweight_exercise_sets_reps_durations()
         )  # TODO add user exercises
@@ -728,6 +738,11 @@ Provide the structured information as per the system instructions.
 ========""",
             "",
         )
+        translatedResult = translatedResult.replace(
+            """Here is the extracted and structured information:
+""",
+            "",
+        )
         translatedResult = translatedResult.replace("(", "")
         translatedResult = translatedResult.replace(")", "")
         translatedResult = translatedResult.replace("```", "")
@@ -735,7 +750,7 @@ Provide the structured information as per the system instructions.
         translatedResult = translatedResult.replace("#c", "")
         translatedResult = translatedResult.replace("#", "")
 
-        return translatedResult
+        return translatedResult.strip()
 
     async def preprocessing(self):
         self.phaeroNote = await self.translate_into_regex_usable_format()

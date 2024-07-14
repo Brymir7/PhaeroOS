@@ -24,7 +24,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     working_dir: /phaeroBackend
     command: bash -c "apt-get update && pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib && pip install --no-cache-dir -r requirements.txt  && python create_rag_faq.py && pip install gunicorn && gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:7000 --timeout 240"
-
+  
   database:
     container_name: phaeroDB
     image: pgvector/pgvector:pg16

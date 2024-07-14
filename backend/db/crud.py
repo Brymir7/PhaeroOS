@@ -423,7 +423,9 @@ def create_daily_note(
     db: Session,
     user_id: int,
 ):
-    _noteEntry = DailyNoteData(user_id=user_id, attached_images=[])
+    _noteEntry = DailyNoteData(
+        user_id=user_id, attached_images=[], has_been_formatted=True
+    )
     db.add(_noteEntry)
     db.commit()
     db.refresh(_noteEntry)

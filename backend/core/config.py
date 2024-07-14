@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     )
     DEV_MODE: bool = os.getenv("DEV_MODE", False)
     OPENAI_KEY: str = os.getenv("OPENAI_KEY", "key")
+    OPENAI_API_URL: str = os.getenv("OPENAI_API_URL", "url")
+    USE_LOCAL_MODEL: bool = os.getenv("USE_LOCAL_MODEL", False)
+    LOCAL_MODEL_URL: str = os.getenv("LOCAL_MODEL_URL", "url")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "docker")
     POSTGRES_URL: str = os.getenv(
         "POSTGRES_URL",
@@ -30,9 +33,11 @@ class Settings(BaseSettings):
     DB_ECHO_LOG: bool = os.getenv("DB_ECHO_LOG", False)
     SUBSCRIPTION_WHITELIST: str = os.getenv("SUBSCRIPTION_WHITELIST", "")
     OWN_TRANSCRIPTION_SERVER_URL: str = os.getenv("OWN_TRANSCRIPTION_SERVER_URL", "")
+    LOCAL_MODEL_NAME: str = os.getenv("LOCAL_MODEL_NAME", "llama3")
     timeTravelAmount: int = os.getenv("timeTravelAmount", 0)
     ASSEMBLYAI_API_KEY: str = os.getenv("ASSEMBLYAI_API_KEY", "ERROR no assemblyai key")
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "ERROR no groq key")
+
 
 def create_settings():
     load_dotenv(find_dotenv())

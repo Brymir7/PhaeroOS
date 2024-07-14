@@ -376,6 +376,7 @@ def get_daily_note(
             client=GROQ_CLIENT,
             sys_language="german" if userSettings.language == "german" else "english",
         )
+        print("Response", response)
         if response:
             formattedNoteWithoutEmptyHeadlines = "\n".join(
                 [

@@ -247,7 +247,7 @@ class DailyNoteData(SQLModel, table=True):
     attached_images: List[str] = Field(
         sa_column=Column(MutableList.as_mutable(ARRAY(String)))
     )
-    has_been_formatted: bool = Field(default=False)
+    has_been_formatted: bool = Field(default=True)
 
 
 class NutritionData(SQLModel, table=True):

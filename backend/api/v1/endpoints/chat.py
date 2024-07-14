@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 import httpx
 from typing import List, Literal, Optional, Union
@@ -11,9 +12,12 @@ from schemas.types import CreateSysMessageRequest, MessageRequest, MessageRespon
 from groq import Groq
 
 router = APIRouter()
-OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
+
 settings = create_settings()
+OPENAI_API_URL = settings.OPENAI_API_URL
 OPENAI_API_KEY = settings.OPENAI_KEY
+USE_LOCAL_MODEL = settings.USE_LOCAL_MODEL
+LOCAL_MODEL_URL = settings.LOCAL_MODEL_URL
 GROQ_API_KEY = settings.GROQ_API_KEY
 
 client = Groq(
@@ -133,88 +137,39 @@ def get_user_rag_result(
     ][:k]
 
 
-def parse_and_merge_notes(
-    current_note: str, new_content: str, previously_used_headlines: list
-) -> str:
-    """
-    Parses the existing note and new content, and merges them based on specified headlines.
-    Only includes headlines from new_content that are also in previously_used_headlines.
-    """
-    current_lines = current_note.split("\n")
-    new_lines = new_content.split("\n")
-    lines_not_attached_to_headline = []
-    current_headlines_map = {}
-    new_headlines_map = {}
-    if not previously_used_headlines:
-        return current_note + "\n" + new_content
-    for line in current_lines:
-        if line.strip() in previously_used_headlines:
-            current_headlines_map[line.strip()] = []
-        elif line.strip() != "":
-            if len(list(current_headlines_map.keys())) == 0:
-                lines_not_attached_to_headline.append(line)
-                continue
-            current_headlines_map[list(current_headlines_map.keys())[-1]].append(line)
+# async def async_AIPrompt(
+#     client: httpx.AsyncClient,
+#     query: str,
+#     injection: str = "",
+#     model: str = "gpt-3.5-turbo-0125",
+#     history=[],
+#     temperature: float = 0.7,
+# ) -> str:
+#     if USE_LOCAL_MODEL:
+#         url = LOCAL_MODEL_URL
+#         data = {
+#             "model": settings.LOCAL_MODEL_NAME,
+#             "messages": [{"role": "user", "content": injection + query}],
+#             "temperature": temperature,
+#         }
+#     else:
+#         url = OPENAI_API_URL
+#         headers = {
+#             "Authorization": f"Bearer {OPENAI_API_KEY}",
+#             "Content-Type": "application/json",
+#         }
+#         data = {
+#             "model": model,
+#             "messages": [{"role": "user", "content": injection + query}],
+#             "temperature": temperature,
+#         }
+#         response = await client.post(url, headers=headers, json=data, timeout=30)
 
-    for line in new_lines:
-        if line.strip() in previously_used_headlines:
-            new_headlines_map[line.strip()] = []
-        elif line.strip() != "":
-            if len(list(new_headlines_map.keys())) == 0:
-                continue
-            new_headlines_map[list(new_headlines_map.keys())[-1]].append(line)
-    if not new_headlines_map or not current_headlines_map:
-        return current_note + "\n" + new_content
-    combined_note = ""
-    make_line_bullet_point = lambda line: (
-        f"* {line}" if ("-" not in line and "*" not in line) else line
-    )
-    for line in current_lines:
-        is_headline = line.strip() in current_headlines_map
-        if is_headline:
-            headline = line.strip()
-            if headline in current_headlines_map:
-                combined_note += f"\n{headline}\n"
-                for line in current_headlines_map[headline]:
-                    combined_note += make_line_bullet_point(line) + "\n"
-            if headline in new_headlines_map and headline in current_headlines_map:
-                for line in new_headlines_map[headline]:
-                    combined_note += make_line_bullet_point(line) + "\n"
-            else:
-                if headline in new_headlines_map:
-                    combined_note += f"{headline}\n"
-                    for line in new_headlines_map[headline]:
-                        combined_note += make_line_bullet_point(line) + "\n"
-        elif line in lines_not_attached_to_headline:
-            combined_note += f"{line}\n"
-    for headline in new_headlines_map.keys():
-        if headline not in current_headlines_map:
-            combined_note += f"\n{headline}\n"
-            for line in new_headlines_map[headline]:
-                combined_note += make_line_bullet_point(line) + "\n"
-    return combined_note
-
-
-async def async_AIPrompt(
-    client: httpx.AsyncClient,
-    query: str,
-    injection: str = "",
-    model: str = "gpt-3.5-turbo-0125",
-    history=[],
-    temperature: float = 0.7,
-) -> str:
-    headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    data = {
-        "model": model,
-        "messages": [{"role": "user", "content": injection + query}],
-        "temperature": temperature,
-    }
-    response = await client.post(OPENAI_API_URL, headers=headers, json=data, timeout=30)
-    result = response.json()
-    return result["choices"][0]["message"]["content"]
+#     response = await client.post(
+#         url, headers=headers if not USE_LOCAL_MODEL else None, json=data, timeout=30
+#     )
+#     result = response.json()
+#     return result["choices"][0]["message"]["content"]
 
 
 async def async_ChatAIPrompt(
@@ -226,22 +181,44 @@ async def async_ChatAIPrompt(
     top_p=1.0,
     freq_penalty=0.1,
     max_tokens=350,
-):
-    headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    data = {
-        "model": model,
-        "messages": history + [{"role": "user", "content": user_message}],
-        "temperature": temperature,
-        "top_p": top_p,
-        "frequency_penalty": freq_penalty,
-        "max_tokens": max_tokens,
-    }
-    response = await client.post(OPENAI_API_URL, headers=headers, json=data, timeout=30)
+) -> str:
+    if USE_LOCAL_MODEL:
+        url = LOCAL_MODEL_URL
+        print("Using local model", url)
+        data = {
+            "model": settings.LOCAL_MODEL_NAME,
+            "messages": history + [{"role": "user", "content": user_message}],
+            "temperature": temperature,
+            "top_p": top_p,
+            "frequency_penalty": freq_penalty,
+            "max_tokens": max_tokens,
+        }
+    else:
+        url = OPENAI_API_URL
+        headers = {
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        data = {
+            "model": model,
+            "messages": history + [{"role": "user", "content": user_message}],
+            "temperature": temperature,
+            "top_p": top_p,
+            "frequency_penalty": freq_penalty,
+            "max_tokens": max_tokens,
+        }
+    response = await client.post(
+        url, headers=headers if not USE_LOCAL_MODEL else None, json=data, timeout=30
+    )
+    if USE_LOCAL_MODEL:
+        json_results = response.content.split(b"\n")
+        result = [json.loads(j) for j in json_results if j]
+        return "".join(
+            obj["message"]["content"]
+            for obj in result
+            if "message" in obj and "content" in obj["message"]
+        )
     result = response.json()
-    print(result["usage"])
     return result["choices"][0]["message"]["content"]
 
 
@@ -253,25 +230,48 @@ def groq_Prompt(
     sys_language: str = "english",
     temperature: float = 0.6,
 ) -> Optional[str]:
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": f"You are a{'n english' if sys_language == 'english' else  ' '+ sys_language} journal entry assistant, but you do not translate. You understand english. You only return the markdown entry neatly formatted, nothing else. You do not make up information.",
-            },
-            {
-                "role": "user",
-                "content": f"{injection}{query}",
-            },
-        ],
-        temperature=temperature,
-        model=model,
-    )
-    return (
-        chat_completion.choices[0].message.content
-        if chat_completion.choices[0].message.content
-        else None
-    )
+    if USE_LOCAL_MODEL:
+        url = LOCAL_MODEL_URL
+        data = {
+            "model": settings.LOCAL_MODEL_NAME,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": f"You are a{'n english' if sys_language == 'english' else  ' '+ sys_language} journal entry assistant, but you do not translate. You understand english. You only return the markdown entry neatly formatted, nothing else. You do not make up information.",
+                },
+                {"role": "user", "content": injection + query},
+            ],
+            "temperature": temperature,
+        }
+        with httpx.Client() as client:
+            response = client.post(url, json=data, timeout=30.0)
+            json_results = response.content.split(b"\n")
+            result = [json.loads(j) for j in json_results if j]
+            return "".join(
+                obj["message"]["content"]
+                for obj in result
+                if "message" in obj and "content" in obj["message"]
+            )
+    else:
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are a{'n english' if sys_language == 'english' else  ' '+ sys_language} journal entry assistant, but you do not translate. You understand english. You only return the markdown entry neatly formatted, nothing else. You do not make up information.",
+                },
+                {
+                    "role": "user",
+                    "content": f"{injection}{query}",
+                },
+            ],
+            temperature=temperature,
+            model=model,
+        )
+        return (
+            chat_completion.choices[0].message.content
+            if chat_completion.choices[0].message.content
+            else None
+        )
 
 
 import httpx
@@ -285,28 +285,49 @@ async def async_GroqPrompt(
     sys_language: str = "english",
     temperature: float = 0.6,
 ) -> str:
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    data = {
-        "model": model,
-        "messages": [
-            {
-                "role": "system",
-                "content": f"You are a{'n english' if sys_language == 'english' else  ' '+ sys_language} journal entry assistant, but you do not translate. You only return the markdown entry neatly formatted, nothing else. You do not make up information. You can use emojis.",
-            },
-            {"role": "user", "content": injection + query},
-        ],
-        "temperature": temperature,
-    }
+    if USE_LOCAL_MODEL:
+        url = LOCAL_MODEL_URL
+        data = {
+            "model": settings.LOCAL_MODEL_NAME,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": f"You are a{'n english' if sys_language == 'english' else  ' '+ sys_language} journal entry assistant, but you do not translate. You only return the markdown entry neatly formatted, nothing else. You do not make up information. You can use emojis.",
+                },
+                {"role": "user", "content": injection + query},
+            ],
+            "temperature": temperature,
+        }
+    else:
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json",
+        }
+        data = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": f"You are a{'n english' if sys_language == 'english' else  ' '+ sys_language} journal entry assistant, but you do not translate. You only return the markdown entry neatly formatted, nothing else. You do not make up information. You can use emojis.",
+                },
+                {"role": "user", "content": injection + query},
+            ],
+            "temperature": temperature,
+        }
     response = await client.post(
-        "https://api.groq.com/openai/v1/chat/completions",
-        headers=headers,
-        json=data,
-        timeout=30,
+        url, headers=headers if not USE_LOCAL_MODEL else None, json=data, timeout=30
     )
     result = response.json()
+    if USE_LOCAL_MODEL:
+        json_results = response.content.split(b"\n")
+        result = [json.loads(j) for j in json_results if j]
+        return "".join(
+            obj["message"]["content"]
+            for obj in result
+            if "message" in obj and "content" in obj["message"]
+        )
+
     return (
         result["choices"][0]["message"]["content"]
         if "choices" in result and result["choices"]
