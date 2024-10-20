@@ -1,6 +1,5 @@
 # Phaero
 
-[Phaero Website](https://phaero.net)
 You can test it out there!
 
 Phaero is an AI-based self-improvement companion that helps you keep a personal journal and extract statistical data from your entries. These entries will (not fully implemented yet) be fed back into Phaero to provide personalized advice based on your feelings and statistical analysis of your data.
